@@ -1,0 +1,75 @@
+version: "3"
+
+includes:
+  tools:
+    taskfile: tools/Taskfile.yaml
+    dir: tools
+
+vars:
+  GOIMPORTS_REVISER_COMPANY_PREFIXES: ""
+
+  GO_SRC_DIR: .
+  GO_TOOLS_FILE: tools/tools.go
+  GO_ENTRY_POINT: cmd/people-enrichment-service
+
+tasks:
+  lint:golangci:
+    vars:
+      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
+    sources:
+      - "{{.SRC_DIR}}/**/*.go"
+    dir: "{{.SRC_DIR}}"
+    cmd: golangci-lint run
+
+  lint:goimports-reviser:
+    vars:
+      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
+      COMPANY_PREFIXES: '{{default "" .GOIMPORTS_REVISER_COMPANY_PREFIXES}}'
+    sources:
+      - "{{.SRC_DIR}}/**/*.go"
+    cmd: GO_SRC_PATH={{.SRC_DIR}} COMPANY_PREFIXES={{.COMPANY_PREFIXES}} ./script/goimports-reviser.sh
+
+  lint:gofumpt:
+    vars:
+      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
+    sources:
+      - "{{.SRC_DIR}}/**/*.go"
+    cmd: gofumpt -l -w -extra {{.SRC_DIR}}
+
+  lint:golines:
+    vars:
+      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
+    sources:
+      - "{{.SRC_DIR}}/**/*.go"
+    cmd: SRC_PATH={{.SRC_DIR}} ./script/golines.sh
+
+  lint:go-vet:
+    vars:
+      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
+    sources:
+      - "{{.SRC_DIR}}/**/*.go"
+    cmd: go vet {{.SRC_DIR}}/...
+
+  lint:
+    deps:
+      - "lint:golangci"
+      - "lint:goimports-reviser"
+      - "lint:gofumpt"
+      - "lint:go-vet"
+      - "lint:golines"
+    desc: Run all lint tasks in parallel
+
+  build:
+    vars:
+      ENTRY_POINT: '{{default "." .GO_ENTRY_POINT}}'
+    cmd: go build -v -o main ./{{.ENTRY_POINT}}
+
+  test:unit:
+    vars:
+      ENTRY_POINT: '{{default "." .ENTRY_POINT}}'
+    cmd: go test ./... -count=1 -v -short
+
+  test:all:
+    vars:
+      ENTRY_POINT: '{{default "." .ENTRY_POINT}}'
+    cmd: go test ./... -count=1 -v
