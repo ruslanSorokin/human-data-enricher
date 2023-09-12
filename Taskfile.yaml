@@ -16,10 +16,11 @@ tasks:
   lint:golangci:
     vars:
       SRC_DIR: '{{default "." .GO_SRC_DIR}}'
+      CFG_FILE: '{{default ".golangci.yaml" .GOLANGCI_CONFIG}}'
     sources:
       - "{{.SRC_DIR}}/**/*.go"
     dir: "{{.SRC_DIR}}"
-    cmd: golangci-lint run
+    cmd: golangci-lint run --config {{.CFG_FILE}}
 
   lint:goimports-reviser:
     vars:
