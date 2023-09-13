@@ -1,4 +1,4 @@
-module github.com/ruslanSorokin/people-enrichment-service/tools
+module github.com/ruslanSorokin/human-data-enricher/tools
 
 go 1.21
 
