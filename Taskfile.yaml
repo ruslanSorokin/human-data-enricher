@@ -10,7 +10,7 @@ vars:
 
   GO_SRC_DIR: .
   GO_TOOLS_FILE: tools/tools.go
-  GO_ENTRY_POINT: cmd/people-enrichment-service
+  GO_ENTRY_POINT: cmd/human-data-enricher
 
 tasks:
   lint:golangci:
@@ -66,10 +66,10 @@ tasks:
 
   test:unit:
     vars:
-      ENTRY_POINT: '{{default "." .ENTRY_POINT}}'
+      ENTRY_POINT: '{{default "." .GO_ENTRY_POINT}}'
     cmd: go test ./... -count=1 -v -short
 
   test:all:
     vars:
-      ENTRY_POINT: '{{default "." .ENTRY_POINT}}'
+      ENTRY_POINT: '{{default "." .GO_ENTRY_POINT}}'
     cmd: go test ./... -count=1 -v
