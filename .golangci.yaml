@@ -133,6 +133,10 @@ linters-settings:
               - "github.com/go-playground/validator/v10"
             reason: "package is obsolete"
 
+  gofumpt:
+    extra-rules: true
+    lang-version: "1.21"
+
   govet:
     # Enable all analyzers.
     # Default: false
