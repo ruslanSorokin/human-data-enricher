@@ -5,7 +5,15 @@ type Person struct {
 	Surname    string `validate:"required,alpha"`
 	MiddleName string `validate:"omitempty,alpha"`
 
-	Nationality string `validate:""`
-	Sex         string `validate:""`
-	Age         uint   `validate:""`
+	Nationality string `validate:"omitempty"`
+	Sex         string `validate:"omitempty"`
+	Age         uint   `validate:"omitempty"`
+}
+
+func New(n, sn, mn string) *Person{
+	return &Person{
+		Name:        n,
+		Surname:     sn,
+		MiddleName:  mn,
+	}
 }
