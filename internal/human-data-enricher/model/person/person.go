@@ -10,10 +10,10 @@ type Person struct {
 	Age         uint   `validate:"omitempty"`
 }
 
-func New(n, sn, mn string) *Person{
+func New(n, sn, mn string) *Person {
 	return &Person{
-		Name:        n,
-		Surname:     sn,
-		MiddleName:  mn,
+		Name:       n,
+		Surname:    sn,
+		MiddleName: mn,
 	}
 }
