@@ -159,7 +159,6 @@ func TestValidatorInvalid(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := v(tc.got.p)
 			require.ErrorIs(err, tc.want.err)
-			t.Log(err)
 		})
 	}
 }
