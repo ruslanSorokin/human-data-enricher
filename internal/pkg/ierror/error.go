@@ -1,41 +1,69 @@
+// Package provides functionality to create API-scope errors for CRUD-like
+// applications.
+//
+// term 'static' means compile-time or immutable error such as:
+//
+//	var ErrAlreadyExists = ierror.NewAlreadyExists("user with this login already exists", "USER_ALREADY_EXISTS")
+//
+// whearas 'dynamic' means that you want to create a copy of a 'static' error
+// and populate it with some information:
+//
+//	if (...){
+//		 return nil, ierror.InstantiateAlreadyExists(ErrAlreadyExists, id)
+//	}
 package ierror
 
-import "fmt"
+import (
+	"google.golang.org/grpc/codes"
+)
+
+type GRPCConvertible interface {
+	// ToGRPC returns GRPC status code.
+	ToGRPC() codes.Code
+}
+
+type HTTPConvertible interface {
+	// ToHTTP returns HTTP status code.
+	ToHTTP() int
+}
+
+type EnumConvertible interface {
+	// ToEnum returns enum.
+	ToEnum() string
+}
+
+type APIErrorI interface {
+	error
+
+	GRPCConvertible
+	HTTPConvertible
+	EnumConvertible
+}
 
 type PropertyError struct {
 	property string
+
+	InvalidArgumentError
 }
 
-type MissingPropertyError PropertyError
-
-var _ error = (*MissingPropertyError)(nil)
-
-// NewMissingProperty returns MissingPropertyError.
-func NewMissingProperty(prop string) error {
-	return &MissingPropertyError{
-		property: prop,
-	}
+type APIError struct {
+	msg  string
+	enum string
+	grpc codes.Code
+	http int
 }
 
-func (e MissingPropertyError) Error() string {
-	return fmt.Sprintf("missing %s", e.property)
+var _ APIErrorI = (*APIError)(nil)
+
+// New creates new a APIError.
+func New(msg string, grpc codes.Code, http int, enum string) *APIError {
+	return &APIError{msg: msg, grpc: grpc, http: http, enum: enum}
 }
 
-type InvalidPropertyError struct {
-	PropertyError
-}
+func (e *APIError) Error() string { return e.msg }
 
-// NewInvalidProperty returns InvalidPropertyError.
-func NewInvalidProperty(prop string) error {
-	return &InvalidPropertyError{
-		PropertyError: PropertyError{
-			property: prop,
-		},
-	}
-}
+func (e *APIError) ToGRPC() codes.Code { return e.grpc }
 
-var _ error = (*InvalidPropertyError)(nil)
+func (e *APIError) ToHTTP() int { return e.http }
 
-func (e InvalidPropertyError) Error() string {
-	return fmt.Sprintf("invalid %s", e.property)
-}
+func (e *APIError) ToEnum() string { return e.enum }
