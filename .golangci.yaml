@@ -127,7 +127,7 @@ linters-settings:
             reason: "see https://developers.google.com/protocol-buffers/docs/reference/go/faq#modules"
         - github.com/satori/go.uuid:
             recommendations:
-              - github.com/google/uuid
+              - github.com/gofrs/uuid/v5
             reason: "package is not maintained"
         - github.com/pkg/errors:
             recommendations:
@@ -137,6 +137,10 @@ linters-settings:
             recommendations:
               - "github.com/go-playground/validator/v10"
             reason: "package is obsolete"
+        - github.com/gofrs/uuid:
+            recommendations:
+              - github.com/gofrs/uuid/v5
+            reason: "package is deprecated"
 
   gofumpt:
     extra-rules: true
@@ -324,3 +328,5 @@ issues:
       linters: [govet]
     - text: "odd number of arguments passed as key-value pairs for logging"
       linters: [loggercheck]
+    - text: "replacement are not allowed: (.*)"
+      linters: [gomoddirectives]
