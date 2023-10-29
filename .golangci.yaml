@@ -153,8 +153,8 @@ linters-settings:
     # Disable analyzers by name.
     # Run `go tool vet help` to see all analyzers.
     # Default: []
-    disable:
-      - fieldalignment # too strict
+    # disable:
+    #   - fieldalignment # too strict
     # Settings per analyzer.
     settings:
       shadow:
@@ -325,6 +325,9 @@ issues:
         - noctx
         - wrapcheck
     - text: 'shadow: declaration of "(err|ctx)" shadows declaration at'
+      linters: [govet]
+    - text: "fieldalignment: (.*)"
+      path: "(.*/test/.*)|(.*/.*_test\\.go)"
       linters: [govet]
     - text: "odd number of arguments passed as key-value pairs for logging"
       linters: [loggercheck]
