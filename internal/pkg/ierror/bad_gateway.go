@@ -15,7 +15,10 @@ type BadGatewayError struct {
 // - HTTP: 502
 //
 // - GRPC: 14 .
-func NewBadGateway(msg, enum string) *BadGatewayError {
+func NewBadGateway(
+	msg string,
+	enum string,
+) *BadGatewayError {
 	return &BadGatewayError{
 		APIError: APIError{
 			msg:  msg,

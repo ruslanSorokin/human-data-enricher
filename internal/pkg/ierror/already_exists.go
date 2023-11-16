@@ -26,7 +26,10 @@ var _ AlreadyExistsErrorI = (*AlreadyExistsError)(nil)
 // - HTTP: 409
 //
 // - GRPC: 6 .
-func NewAlreadyExists(msg, enum string) *AlreadyExistsError {
+func NewAlreadyExists(
+	msg string,
+	enum string,
+) *AlreadyExistsError {
 	return &AlreadyExistsError{
 		duplicateID: "",
 		APIError: APIError{
@@ -38,30 +41,34 @@ func NewAlreadyExists(msg, enum string) *AlreadyExistsError {
 	}
 }
 
-// InstantiateAlreadyExists creates a copy of AlreadyExistsError based on "err" with
-// populated "duplicateID" field.
-//
-// Panics if "err" is nil.
-func InstantiateAlreadyExists(
-	err *AlreadyExistsError,
-	dupID string,
-) *AlreadyExistsError {
-	if err == nil {
-		panic("err cannot be nil")
-	}
-
-	return &AlreadyExistsError{
-		duplicateID: dupID,
-		APIError:    err.APIError,
-	}
-}
-
 // DuplicateID returns duplicate ID if field is populated.
 func (e AlreadyExistsError) DuplicateID() (string, bool) {
 	return e.duplicateID, e.duplicateID != ""
 }
 
-func (e AlreadyExistsError) Is(target error) bool {
-	t := NewAlreadyExists("", "")
-	return errors.As(target, &t) && t.APIError == e.APIError
+type InstantiatedAlreadyExistsError struct {
+	AlreadyExistsError
+
+	parent *AlreadyExistsError
+}
+
+func (e *AlreadyExistsError) Instantiate() *InstantiatedAlreadyExistsError {
+	return &InstantiatedAlreadyExistsError{
+		AlreadyExistsError: *NewAlreadyExists(e.msg, e.enum),
+		parent:             e,
+	}
+}
+
+// WithDuplicateID returns a copy of AlreadyExistsError with populated
+// "duplicateID" field.
+func (e *InstantiatedAlreadyExistsError) WithDuplicateID(
+	dupID string,
+) *InstantiatedAlreadyExistsError {
+	e.duplicateID = dupID
+	return e
+}
+
+func (e InstantiatedAlreadyExistsError) Is(target error) bool {
+	var t *AlreadyExistsError
+	return errors.As(target, &t) && t.APIError == e.parent.APIError
 }

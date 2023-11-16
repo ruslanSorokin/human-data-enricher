@@ -11,9 +11,15 @@
 //	if (...){
 //		 return nil, ierror.InstantiateAlreadyExists(ErrAlreadyExists, id)
 //	}
+//
+// All 'NewXXX' ctors return 'static' errors. And all 'static' errors that can
+// be populated with some request-specific parameters and transformed into
+// 'dynamic' ones, can be transformed into them by 'InstantiateXXX' method.
 package ierror
 
 import (
+	"errors"
+
 	"google.golang.org/grpc/codes"
 )
 
@@ -67,3 +73,39 @@ func (e *APIError) ToGRPC() codes.Code { return e.grpc }
 func (e *APIError) ToHTTP() int { return e.http }
 
 func (e *APIError) ToEnum() string { return e.enum }
+
+type InstantiatedAPIError struct {
+	APIError
+
+	parent *APIError
+}
+
+func (e *APIError) Instantiate() *InstantiatedAPIError {
+	return &InstantiatedAPIError{APIError: *New(e.msg, e.grpc, e.http, e.enum), parent: e}
+}
+
+func (e *InstantiatedAPIError) WithEnum(
+	enum string,
+) *InstantiatedAPIError {
+	e.enum = enum
+	return e
+}
+
+func (e *InstantiatedAPIError) WithGRPCStCode(
+	code codes.Code,
+) *InstantiatedAPIError {
+	e.grpc = code
+	return e
+}
+
+func (e *InstantiatedAPIError) WithHTTPStCode(
+	code int,
+) *InstantiatedAPIError {
+	e.http = code
+	return e
+}
+
+func (e InstantiatedAPIError) Is(target error) bool {
+	var t *APIError
+	return errors.As(target, &t) && t == e.parent
+}

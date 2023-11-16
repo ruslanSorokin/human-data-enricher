@@ -35,30 +35,34 @@ func NewInvalidProperty(prop, enum string) *InvalidPropertyError {
 	}
 }
 
-// InstantiateInvalidProperty creates a new InvalidPropertyError from "err" with
-// populated "violation" field.
-//
-// Panics if "err" is nil.
-func InstantiateInvalidProperty(
-	err *InvalidPropertyError,
-	vio string,
-) *InvalidPropertyError {
-	if err == nil {
-		panic("err cannot be nil")
-	}
-
-	return &InvalidPropertyError{
-		violation:     vio,
-		PropertyError: err.PropertyError,
-	}
-}
-
 // Violation returns property's violation.
 func (e InvalidPropertyError) Violation() (string, bool) {
 	return e.violation, e.violation != ""
 }
 
-func (e InvalidPropertyError) Is(target error) bool {
-	t := NewInvalidProperty("", "")
-	return errors.As(target, &t) && t.APIError == e.APIError
+type InstantiatedInvalidPropertyError struct {
+	InvalidPropertyError
+
+	parent *InvalidPropertyError
+}
+
+func (e *InvalidPropertyError) Instantiate() *InstantiatedInvalidPropertyError {
+	return &InstantiatedInvalidPropertyError{
+		InvalidPropertyError: *NewInvalidProperty(e.property, e.enum),
+		parent:               e,
+	}
+}
+
+// WithViolation creates a new InvalidPropertyError from "err" with
+// populated "violation" field.
+func (e *InstantiatedInvalidPropertyError) WithViolation(vio string) *InvalidPropertyError {
+	return &InvalidPropertyError{
+		PropertyError: e.PropertyError,
+		violation:     vio,
+	}
+}
+
+func (e InstantiatedInvalidPropertyError) Is(target error) bool {
+	var t *InvalidPropertyError
+	return errors.As(target, &t) && t == e.parent
 }

@@ -4,32 +4,52 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ruslanSorokin/human-data-enricher/internal/pkg/ierror"
 )
 
 func TestInstantiateAlreadyExists(t *testing.T) {
-	assert := assert.New(t)
+	require := require.New(t)
 
 	userStatic := ierror.NewAlreadyExists(
 		"user with given login already exists",
 		"USER_ALREADY_EXISTS",
 	)
-	userDynamic := ierror.InstantiateAlreadyExists(userStatic, "73546234")
+	dupID_1 := "73546234"
 
-	assert.True(errors.Is(userStatic, userDynamic))
+	userDynamic := userStatic.Instantiate().WithDuplicateID(dupID_1)
+
+	dup, ok := userDynamic.DuplicateID()
+
+	require.True(ok)
+	require.Equal(dup, dupID_1)
+
+	require.False(errors.Is(userStatic, userDynamic))
 
 	productStatic := ierror.NewAlreadyExists(
 		"product with given name already exists",
 		"PRODUCT_ALREADY_EXISTS",
 	)
-	productDynamic := ierror.InstantiateAlreadyExists(productStatic, "6456235")
 
-	assert.True(errors.Is(productStatic, productDynamic))
+	dupID_2 := "6456235"
+	productDynamic := productStatic.Instantiate().WithDuplicateID(dupID_2)
 
-	assert.False(errors.Is(productStatic, userDynamic))
-	assert.False(errors.Is(userStatic, productDynamic))
+	dup, ok = productDynamic.DuplicateID()
 
-	assert.False(errors.Is(userStatic, errors.New("random error here")))
+	require.True(ok)
+	require.Equal(dup, dupID_2)
+
+	require.True(errors.Is(userDynamic, userStatic))
+	require.False(errors.Is(userStatic, userDynamic))
+
+	require.True(errors.Is(productDynamic, productStatic))
+	require.False(errors.Is(productStatic, productDynamic))
+
+	require.False(errors.Is(productStatic, productDynamic))
+
+	require.False(errors.Is(productStatic, userDynamic))
+	require.False(errors.Is(userStatic, productDynamic))
+
+	require.False(errors.Is(userStatic, errors.New("random error here")))
 }
