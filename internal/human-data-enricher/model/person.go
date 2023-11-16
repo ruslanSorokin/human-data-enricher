@@ -13,15 +13,15 @@ type PersonID uuid.UUID
 //
 //nolint:govet // alignment is pretty much optimized
 type Person struct {
-	ID uuid.UUID
+	id uuid.UUID
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt sql.NullTime
+	createdAt time.Time
+	updatedAt time.Time
+	deletedAt sql.NullTime
 
-	Name       string  `validate:"required,alpha"`
-	Surname    string  `validate:"required,alpha"`
-	MiddleName *string `validate:"omitempty,alpha"`
+	Name       string
+	Surname    string
+	MiddleName sql.NullString
 
 	Gender      string `validate:"required,alpha"`
 	Nationality string `validate:"required,alpha"`
@@ -32,7 +32,7 @@ type Person struct {
 type PersonOptions struct {
 	Name       string
 	Surname    string
-	MiddleName *string
+	MiddleName sql.NullString
 
 	Gender      string
 	Nationality string
@@ -41,17 +41,33 @@ type PersonOptions struct {
 
 func (opts *PersonOptions) toModel() Person {
 	return Person{
-		ID:          uuid.Nil,
+		id:          uuid.Nil,
 		Name:        opts.Name,
 		Surname:     opts.Surname,
 		MiddleName:  opts.MiddleName,
 		Nationality: opts.Nationality,
 		Gender:      opts.Gender,
 		Age:         opts.Age,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
-		DeletedAt:   sql.NullTime{Time: time.Time{}, Valid: false},
+		createdAt:   time.Time{},
+		updatedAt:   time.Time{},
+		deletedAt:   sql.NullTime{Time: time.Time{}, Valid: false},
 	}
+}
+
+func (p *Person) ID() uuid.UUID {
+	return p.id
+}
+
+func (p *Person) CreatedAt() time.Time {
+	return p.createdAt
+}
+
+func (p *Person) UpdatedAt() time.Time {
+	return p.updatedAt
+}
+
+func (p *Person) DeletedAt() sql.NullTime {
+	return p.deletedAt
 }
 
 // NewPerson creates a new Person with given "opts".
@@ -65,7 +81,7 @@ func ReinstatePerson(
 	id uuid.UUID,
 	name string,
 	surname string,
-	middleName *string,
+	middleName sql.NullString,
 	nationality string,
 	gender string,
 	age int,
@@ -74,15 +90,15 @@ func ReinstatePerson(
 	deletedAt sql.NullTime,
 ) Person {
 	return Person{
-		ID:          id,
+		id:          id,
 		Name:        name,
 		Surname:     surname,
 		MiddleName:  middleName,
 		Nationality: nationality,
 		Gender:      gender,
 		Age:         age,
-		CreatedAt:   createdAt,
-		UpdatedAt:   updatedAt,
-		DeletedAt:   deletedAt,
+		createdAt:   createdAt,
+		updatedAt:   updatedAt,
+		deletedAt:   deletedAt,
 	}
 }
