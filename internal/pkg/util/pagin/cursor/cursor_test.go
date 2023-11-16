@@ -1,3 +1,4 @@
+//nolint:testpackage // 'newCursor' is unexported
 package cursor
 
 import (
@@ -76,7 +77,6 @@ func TestNewLeftCursor(t *testing.T) {
 			want:    Cursor{Left: "", Right: ""},
 			wantErr: true,
 		},
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -162,7 +162,6 @@ func TestNewBoundedCursor(t *testing.T) {
 			want:    Cursor{Left: ValidUUID, Right: ""},
 			wantErr: true,
 		},
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

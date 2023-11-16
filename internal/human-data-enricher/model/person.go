@@ -11,7 +11,7 @@ type PersonID uuid.UUID
 
 // Person represents a person entity.
 //
-//nolint:govet // alignment is pretty much optimized
+//nolint:govet // Alignment is pretty much optimized
 type Person struct {
 	id uuid.UUID
 
@@ -29,6 +29,8 @@ type Person struct {
 }
 
 // PersonOptions contains the input data for creating the Person struct.
+//
+//nolint:govet // Alignment is pretty much optimized
 type PersonOptions struct {
 	Name       string
 	Surname    string

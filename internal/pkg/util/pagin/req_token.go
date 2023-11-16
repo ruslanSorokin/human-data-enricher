@@ -25,21 +25,20 @@ type OrderByCell struct {
 
 type ReqToken struct {
 	Cursor cursor.Cursor `json:"cursor"`
+	Order  order         `json:"order"`
 
 	OrderBy []OrderByCell `json:"order_by,omitempty"`
-
-	Order order `json:"order"`
-	Limit int   `json:"limit"`
+	Limit   int           `json:"limit"`
 }
 
 func NewReqToken(opts ...ReqTokenOption) ReqToken {
-	t := &ReqToken{}
+	var t ReqToken
 
 	for _, o := range opts {
-		o(t)
+		o(&t)
 	}
 
-	return *t
+	return t
 }
 
 func (t *ReqToken) HasCursor() bool {
@@ -68,8 +67,8 @@ func WithLimit(l int) ReqTokenOption {
 
 type OrderByOptions struct {
 	Field  string
-	IsDesc bool
 	Cursor cursor.Cursor
+	IsDesc bool
 }
 
 func (opt *OrderByOptions) toCell() OrderByCell {

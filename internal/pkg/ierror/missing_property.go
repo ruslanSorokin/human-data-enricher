@@ -1,6 +1,8 @@
 package ierror
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // MissingPropertyError means that some mondatory property is missing.
 type MissingPropertyError struct {

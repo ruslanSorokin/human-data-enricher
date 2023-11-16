@@ -1,3 +1,4 @@
+//nolint:gochecknoglobals // TODO: use closures
 package ivalidator
 
 import (
@@ -26,7 +27,7 @@ func matchErr(matcher map[tag]error, err error) error {
 		return nil
 	}
 	var errs []error
-	//nolint: errorlint // safe to use with range statements
+	//nolint: errorlint // Safe to use with range statements
 	for _, e := range err.(pgvtor.ValidationErrors) {
 		t := tag(e.Tag())
 		err, ok := matcher[t]

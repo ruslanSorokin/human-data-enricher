@@ -11,7 +11,9 @@ import (
 var (
 	// ErrInvalidPaginationRequest occurs if pagination request on person was.
 	ErrInvalidPaginationRequest = ierror.NewInvalidArgument(
-		"invalid pagination request on person", "INVALID_PAGINATION_REQUEST_ON_PERSON")
+		"invalid pagination request on person",
+		"INVALID_PAGINATION_REQUEST_ON_PERSON",
+	)
 
 	// ErrPersonAlreadyExists occurs if person with such "ID" already exists.
 	ErrPersonAlreadyExists = ierror.NewAlreadyExists(

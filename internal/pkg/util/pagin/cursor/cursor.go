@@ -4,6 +4,7 @@ import (
 	"errors"
 )
 
+//nolint:gochecknoglobals // Intentional global variable
 var Nil = Cursor{Left: "", Right: ""}
 
 type Cursor struct {

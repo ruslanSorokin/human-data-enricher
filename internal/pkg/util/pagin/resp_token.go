@@ -3,11 +3,11 @@ package pagin
 import "github.com/ruslanSorokin/human-data-enricher/internal/pkg/util/pagin/cursor"
 
 type RespToken struct {
-	ReqToken ReqToken `json:"request_token"`
-
+	OrderBy        []OrderByCell `json:"order_by,omitempty"`
 	PrevPageCursor cursor.Cursor `json:"prev_page_cursor"`
 	NextPageCursor cursor.Cursor `json:"next_page_cursor"`
-	OrderBy        []OrderByCell `json:"order_by,omitempty"`
+
+	ReqToken ReqToken `json:"request_token"`
 
 	HasNextPage bool `json:"has_next_page"`
 }
