@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	pgvtor "github.com/go-playground/validator/v10"
 
@@ -32,7 +33,7 @@ func matchErr(matcher map[tag]error, err error) error {
 		t := tag(e.Tag())
 		err, ok := matcher[t]
 		if !ok {
-			panic("violation with unknown tag")
+			return fmt.Errorf("violation with unknown tag %s", t)
 		}
 
 		errs = append(errs, err)

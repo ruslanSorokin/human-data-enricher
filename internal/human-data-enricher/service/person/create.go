@@ -2,11 +2,10 @@ package person_service
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	"github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/model"
-	"github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider"
+	"github.com/ruslanSorokin/human-data-enricher/internal/pkg/ierror"
 )
 
 type CreatorI interface {
@@ -55,23 +54,23 @@ func (s *PersonService) Create(
 	p := model.NewPerson(opts)
 
 	if err := s.vtor.Person(ctx, &p); err != nil {
-		s.log.Debug("bad attempt to create a person",
-			"person", p,
-			"opts", opts)
+		if !ierror.As(err) {
+			s.log.Error("bad attempt to create a person",
+				"person", p,
+				"opts", opts)
+		}
 		return p, err
 	}
 
 	p, err := s.storage.Create(ctx, &p)
 	switch {
-	case err == nil:
-	case errors.Is(err, provider.ErrPersonAlreadyExists):
+	case err == nil || ierror.As(err):
 	default:
 		s.log.Error("bad attempt to insert a new person into the storage",
 			"error", err,
 			"person", p)
-		return p, err
 	}
-	return p, nil
+	return p, err
 }
 
 func sanitazePersonOpts(o *model.PersonOptions) *model.PersonOptions {

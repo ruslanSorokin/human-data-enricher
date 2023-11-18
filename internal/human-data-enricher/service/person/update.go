@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/model"
+	"github.com/ruslanSorokin/human-data-enricher/internal/pkg/ierror"
 )
 
 type UpdaterI interface {
@@ -51,7 +52,20 @@ func (s *PersonService) Update(
 	var res model.Person
 
 	if err := s.vtor.Person(ctx, person); err != nil {
+		if !ierror.As(err) {
+			s.log.Error("bad attempt to create a person",
+				"person", person)
+		}
 		return res, err
 	}
-	return s.storage.Update(ctx, person)
+
+	p, err := s.storage.Update(ctx, person)
+	switch {
+	case err == nil || ierror.As(err):
+	default:
+		s.log.Error("bad attempt to update a person",
+			"err", err,
+			"person", person)
+	}
+	return p, err
 }

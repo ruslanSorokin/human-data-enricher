@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/model"
+	"github.com/ruslanSorokin/human-data-enricher/internal/pkg/ierror"
 )
 
 type GetterI interface {
@@ -29,11 +30,19 @@ func (s PersonService) Get(
 	var res model.Person
 
 	if err := s.vtor.ID(ctx, id); err != nil {
+		if !ierror.As(err) {
+			s.log.Error("bad attempt to create a person",
+				"id", id)
+		}
 		return res, err
 	}
 	res, err := s.storage.Get(ctx, id)
-	if err != nil {
-		return res, err
+	switch {
+	case err == nil || ierror.As(err):
+	default:
+		s.log.Error("bad attempt to retrieve a person",
+			"err", err,
+			"id", id)
 	}
-	return res, nil
+	return res, err
 }
