@@ -51,20 +51,30 @@ func (s *PersonService) Create(
 ) (model.Person, error) {
 	opts = sanitazePersonOpts(opts)
 
-	p := model.NewPerson(opts)
-
-	if err := s.vtor.Person(ctx, &p); err != nil {
-		if !ierror.As(err) {
-			s.log.Error("bad attempt to create a person",
-				"person", p,
-				"opts", opts)
-		}
+	p, err := model.NewPerson(opts)
+	if err != nil {
 		return p, err
 	}
 
-	p, err := s.storage.Create(ctx, &p)
+	err = s.vtor.Person(ctx, &p)
+	if err != nil {
+		switch {
+		case ierror.As(err):
+
+		default:
+			s.log.Error("bad attempt to create a person",
+				"error", err,
+				"person", p,
+				"opts", opts)
+		}
+
+		return p, err
+	}
+
+	p, err = s.storage.Create(ctx, &p)
 	switch {
 	case err == nil || ierror.As(err):
+
 	default:
 		s.log.Error("bad attempt to insert a new person into the storage",
 			"error", err,

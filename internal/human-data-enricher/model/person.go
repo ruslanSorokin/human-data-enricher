@@ -41,19 +41,43 @@ type PersonOptions struct {
 	Age         int
 }
 
-func (opts *PersonOptions) toModel() Person {
-	return Person{
-		id:          uuid.Nil,
-		Name:        opts.Name,
-		Surname:     opts.Surname,
-		MiddleName:  opts.MiddleName,
-		Nationality: opts.Nationality,
-		Gender:      opts.Gender,
-		Age:         opts.Age,
-		createdAt:   time.Time{},
-		updatedAt:   time.Time{},
-		deletedAt:   sql.NullTime{Time: time.Time{}, Valid: false},
+type ReinstatedPersonOpts struct {
+	ID uuid.UUID
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt sql.NullTime
+
+	Name       string
+	Surname    string
+	MiddleName sql.NullString
+
+	Gender      string
+	Nationality string
+	Age         int
+}
+
+func (o *PersonOptions) toModel() (Person, error) {
+	var res Person
+	id, err := uuid.NewV7()
+	if err != nil {
+		return res, err
 	}
+
+	t := time.Now().UTC()
+
+	res.id = id
+	res.createdAt = t
+	res.updatedAt = t
+	res.deletedAt = sql.NullTime{Valid: false, Time: t}
+	res.Name = o.Name
+	res.Surname = o.Surname
+	res.MiddleName = o.MiddleName
+	res.Gender = o.Gender
+	res.Nationality = o.Nationality
+	res.Age = o.Age
+
+	return res, nil
 }
 
 func (p *Person) ID() uuid.UUID {
@@ -75,32 +99,23 @@ func (p *Person) DeletedAt() sql.NullTime {
 // NewPerson creates a new Person with given "opts".
 func NewPerson(
 	opts *PersonOptions,
-) Person {
+) (Person, error) {
 	return opts.toModel()
 }
 
 func ReinstatePerson(
-	id uuid.UUID,
-	name string,
-	surname string,
-	middleName sql.NullString,
-	nationality string,
-	gender string,
-	age int,
-	createdAt time.Time,
-	updatedAt time.Time,
-	deletedAt sql.NullTime,
+	opts *ReinstatedPersonOpts,
 ) Person {
 	return Person{
-		id:          id,
-		Name:        name,
-		Surname:     surname,
-		MiddleName:  middleName,
-		Nationality: nationality,
-		Gender:      gender,
-		Age:         age,
-		createdAt:   createdAt,
-		updatedAt:   updatedAt,
-		deletedAt:   deletedAt,
+		id:          opts.ID,
+		Name:        opts.Name,
+		Surname:     opts.Surname,
+		MiddleName:  opts.MiddleName,
+		Nationality: opts.Nationality,
+		Gender:      opts.Gender,
+		Age:         opts.Age,
+		createdAt:   opts.CreatedAt,
+		updatedAt:   opts.UpdatedAt,
+		deletedAt:   opts.DeletedAt,
 	}
 }

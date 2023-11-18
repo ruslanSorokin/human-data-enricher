@@ -51,20 +51,27 @@ func (s *PersonService) Update(
 ) (model.Person, error) {
 	var res model.Person
 
-	if err := s.vtor.Person(ctx, person); err != nil {
-		if !ierror.As(err) {
-			s.log.Error("bad attempt to create a person",
+	err := s.vtor.Person(ctx, person)
+	if err != nil {
+		switch {
+		case ierror.As(err):
+
+		default:
+			s.log.Error("bad attempt to update a person",
+				"error", err,
 				"person", person)
 		}
+
 		return res, err
 	}
 
 	p, err := s.storage.Update(ctx, person)
 	switch {
 	case err == nil || ierror.As(err):
+
 	default:
 		s.log.Error("bad attempt to update a person",
-			"err", err,
+			"error", err,
 			"person", person)
 	}
 	return p, err
