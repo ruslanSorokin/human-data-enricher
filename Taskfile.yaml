@@ -13,52 +13,91 @@ vars:
   GO_ENTRY_POINT: cmd/human-data-enricher
 
 tasks:
-  lint:golangci:
-    vars:
-      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
-      CFG_FILE: '{{default ".golangci.yaml" .GOLANGCI_CONFIG}}'
-    sources:
-      - "{{.SRC_DIR}}/**/*.go"
-    dir: "{{.SRC_DIR}}"
-    cmd: golangci-lint run --config {{.CFG_FILE}}
+  # ---------------------------------------------------------------------------- #
+  #                                    Actions                                   #
+  # ---------------------------------------------------------------------------- #
 
-  lint:goimports-reviser:
+  # ----------------------------------- lint ----------------------------------- #
+  lint:
+    desc: "Lint and format source code"
+    aliases: ["l"]
     vars:
       SRC_DIR: '{{default "." .GO_SRC_DIR}}'
       COMPANY_PREFIXES: '{{default "" .GOIMPORTS_REVISER_COMPANY_PREFIXES}}'
-    sources:
-      - "{{.SRC_DIR}}/**/*.go"
+    cmd:
+      task: _lint
+      vars:
+        SRC_DIR: "{{.SRC_DIR}}"
+        COMPANY_PREFIXES: "{{.COMPANY_PREFIXES}}"
+        DOCKERFILE: "{{.CONTAINER_FILE}}"
+  # ---------------------------------------------------------------------------- #
+  #                                  Lint action                                 #
+  # ---------------------------------------------------------------------------- #
+  lint:golangci:
+    internal: true
+    requires:
+      vars: ["SRC_DIR"]
+    dir: "{{.SRC_DIR}}"
+    cmd: golangci-lint run
+
+  lint:goimports-reviser:
+    internal: true
+    requires:
+      vars: ["SRC_DIR", "COMPANY_PREFIXES"]
     cmd: GO_SRC_PATH={{.SRC_DIR}} COMPANY_PREFIXES={{.COMPANY_PREFIXES}} ./script/goimports-reviser.sh
 
   lint:gofumpt:
-    vars:
-      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
-    sources:
-      - "{{.SRC_DIR}}/**/*.go"
+    internal: true
+    requires:
+      vars: ["SRC_DIR"]
     cmd: gofumpt -l -w -extra {{.SRC_DIR}}
 
   lint:golines:
-    vars:
-      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
-    sources:
-      - "{{.SRC_DIR}}/**/*.go"
+    internal: true
+    requires:
+      vars: ["SRC_DIR"]
     cmd: SRC_PATH={{.SRC_DIR}} ./script/golines.sh
 
   lint:go-vet:
-    vars:
-      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
-    sources:
-      - "{{.SRC_DIR}}/**/*.go"
+    internal: true
+    requires:
+      vars: ["SRC_DIR"]
     cmd: go vet {{.SRC_DIR}}/...
 
-  lint:
+  __lint:
+    internal: true
+    requires:
+      vars: ["SRC_DIR", "COMPANY_PREFIXES", "DOCKERFILE"]
     deps:
-      - "lint:golangci"
-      - "lint:goimports-reviser"
-      - "lint:gofumpt"
-      - "lint:go-vet"
-      - "lint:golines"
-    desc: Run all lint tasks in parallel
+      - task: "lint:golangci"
+        vars:
+          SRC_DIR: "{{.SRC_DIR}}"
+      - task: "lint:goimports-reviser"
+        vars:
+          SRC_DIR: "{{.SRC_DIR}}"
+          COMPANY_PREFIXES: "{{.COMPANY_PREFIXES}}"
+      - task: "lint:gofumpt"
+        vars:
+          SRC_DIR: "{{.SRC_DIR}}"
+      - task: "lint:go-vet"
+        vars:
+          SRC_DIR: "{{.SRC_DIR}}"
+      - task: "lint:golines"
+        vars:
+          SRC_DIR: "{{.SRC_DIR}}"
+
+  _lint:
+    internal: true
+    requires:
+      vars: ["SRC_DIR", "COMPANY_PREFIXES", "DOCKERFILE"]
+    sources:
+      - "{{.SRC_DIR}}/**/*.go"
+    cmd:
+      task: __lint
+      vars:
+        SRC_DIR: "{{.SRC_DIR}}"
+        COMPANY_PREFIXES: "{{.COMPANY_PREFIXES}}"
+        DOCKERFILE: "{{.DOCKERFILE}}"
 
   build:
     vars:
