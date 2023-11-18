@@ -16,14 +16,14 @@ func TestInstantiateAlreadyExists(t *testing.T) {
 		"user with given login already exists",
 		"USER_ALREADY_EXISTS",
 	)
-	dupID_1 := "73546234"
+	dupIDUser := "73546234"
 
-	userDynamic := userStatic.Instantiate().WithDuplicateID(dupID_1)
+	userDynamic := userStatic.Instantiate().WithDuplicateID(dupIDUser)
 
 	dup, ok := userDynamic.DuplicateID()
 
 	require.True(ok)
-	require.Equal(dup, dupID_1)
+	require.Equal(dup, dupIDUser)
 
 	require.False(errors.Is(userStatic, userDynamic))
 
@@ -32,13 +32,13 @@ func TestInstantiateAlreadyExists(t *testing.T) {
 		"PRODUCT_ALREADY_EXISTS",
 	)
 
-	dupID_2 := "6456235"
-	productDynamic := productStatic.Instantiate().WithDuplicateID(dupID_2)
+	dupIDProduct := "6456235"
+	productDynamic := productStatic.Instantiate().WithDuplicateID(dupIDProduct)
 
 	dup, ok = productDynamic.DuplicateID()
 
 	require.True(ok)
-	require.Equal(dup, dupID_2)
+	require.Equal(dup, dupIDProduct)
 
 	require.True(errors.Is(userDynamic, userStatic))
 	require.False(errors.Is(userStatic, userDynamic))

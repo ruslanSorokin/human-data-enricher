@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ruslanSorokin/human-data-enricher/internal/pkg/ierror"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
+
+	"github.com/ruslanSorokin/human-data-enricher/internal/pkg/ierror"
 )
 
 func TestAPIError_WithEnum(t *testing.T) {
@@ -76,14 +77,16 @@ func TestAPIError_WithHTTPStCode(t *testing.T) {
 		codes.AlreadyExists, http.StatusConflict,
 		"USER_ALREADY_EXISTS")
 
-	userDynamic := userStatic.Instantiate().WithHTTPStCode(http.StatusExpectationFailed)
+	userDynamic := userStatic.Instantiate().
+		WithHTTPStCode(http.StatusExpectationFailed)
 
 	productStatic := ierror.New(
 		"product with given name already exists",
 		codes.AlreadyExists, http.StatusConflict,
 		"PRODUCT_ALREADY_EXISTS")
 
-	productDynamic := productStatic.Instantiate().WithHTTPStCode(http.StatusExpectationFailed)
+	productDynamic := productStatic.Instantiate().
+		WithHTTPStCode(http.StatusExpectationFailed)
 
 	require.True(errors.Is(userDynamic, userStatic))
 	require.False(errors.Is(userStatic, userDynamic))

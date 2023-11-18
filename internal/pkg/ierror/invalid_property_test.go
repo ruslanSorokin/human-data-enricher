@@ -16,7 +16,8 @@ func TestInstantiateInvalidProperty(t *testing.T) {
 		"invalid name",
 		"INVALID_NAME",
 	)
-	nameDynamic := nameStatic.Instantiate().WithViolation("contains numeric character")
+	nameDynamic := nameStatic.Instantiate().
+		WithViolation("contains numeric character")
 
 	assert.False(errors.Is(nameStatic, nameDynamic))
 
@@ -24,7 +25,8 @@ func TestInstantiateInvalidProperty(t *testing.T) {
 		"invalid surname",
 		"INVALID_SURNAME",
 	)
-	surnameDynamic := surnameStatic.Instantiate().WithViolation("contains numeric character")
+	surnameDynamic := surnameStatic.Instantiate().
+		WithViolation("contains numeric character")
 
 	assert.False(errors.Is(surnameStatic, surnameDynamic))
 

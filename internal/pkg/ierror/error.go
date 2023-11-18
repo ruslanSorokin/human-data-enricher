@@ -75,13 +75,16 @@ func (e *APIError) ToHTTP() int { return e.http }
 func (e *APIError) ToEnum() string { return e.enum }
 
 type InstantiatedAPIError struct {
-	APIError
-
 	parent *APIError
+
+	APIError
 }
 
 func (e *APIError) Instantiate() *InstantiatedAPIError {
-	return &InstantiatedAPIError{APIError: *New(e.msg, e.grpc, e.http, e.enum), parent: e}
+	return &InstantiatedAPIError{
+		APIError: *New(e.msg, e.grpc, e.http, e.enum),
+		parent:   e,
+	}
 }
 
 func (e *InstantiatedAPIError) WithEnum(

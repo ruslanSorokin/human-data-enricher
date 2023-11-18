@@ -47,9 +47,9 @@ func (e AlreadyExistsError) DuplicateID() (string, bool) {
 }
 
 type InstantiatedAlreadyExistsError struct {
-	AlreadyExistsError
-
 	parent *AlreadyExistsError
+
+	AlreadyExistsError
 }
 
 func (e *AlreadyExistsError) Instantiate() *InstantiatedAlreadyExistsError {

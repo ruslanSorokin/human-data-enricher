@@ -41,9 +41,9 @@ func (e InvalidPropertyError) Violation() (string, bool) {
 }
 
 type InstantiatedInvalidPropertyError struct {
-	InvalidPropertyError
-
 	parent *InvalidPropertyError
+
+	InvalidPropertyError
 }
 
 func (e *InvalidPropertyError) Instantiate() *InstantiatedInvalidPropertyError {
@@ -55,7 +55,9 @@ func (e *InvalidPropertyError) Instantiate() *InstantiatedInvalidPropertyError {
 
 // WithViolation creates a new InvalidPropertyError from "err" with
 // populated "violation" field.
-func (e *InstantiatedInvalidPropertyError) WithViolation(vio string) *InvalidPropertyError {
+func (e *InstantiatedInvalidPropertyError) WithViolation(
+	vio string,
+) *InvalidPropertyError {
 	return &InvalidPropertyError{
 		PropertyError: e.PropertyError,
 		violation:     vio,
