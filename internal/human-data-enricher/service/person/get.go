@@ -32,7 +32,7 @@ func (s PersonService) Get(
 	err := s.vtor.ID(ctx, id)
 	if err != nil {
 		switch {
-		case ierror.As(err):
+		case ierror.IsAPIError(err):
 
 		default:
 			s.log.Error("bad attempt to retrieve a person",
@@ -45,7 +45,7 @@ func (s PersonService) Get(
 
 	res, err = s.storage.Get(ctx, id)
 	switch {
-	case err == nil || ierror.As(err):
+	case err == nil || ierror.IsAPIError(err):
 
 	default:
 		s.log.Error("bad attempt to retrieve a person",

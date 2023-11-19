@@ -7,6 +7,7 @@ import (
 	uuid "github.com/gofrs/uuid/v5"
 )
 
+// PersonID is an alias for type of the Person.id field.
 type PersonID uuid.UUID
 
 // Person represents a person entity.
@@ -23,9 +24,9 @@ type Person struct {
 	Surname    string
 	MiddleName sql.NullString
 
-	Gender      string `validate:"required,alpha"`
-	Nationality string `validate:"required,alpha"`
-	Age         int    `validate:"required,gte=0,lte=130"`
+	Gender      string
+	Nationality string
+	Age         int
 }
 
 // PersonOptions contains the input data for creating the Person struct.
@@ -42,8 +43,6 @@ type PersonOptions struct {
 }
 
 type ReinstatedPersonOpts struct {
-	ID uuid.UUID
-
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt sql.NullTime
@@ -55,10 +54,13 @@ type ReinstatedPersonOpts struct {
 	Gender      string
 	Nationality string
 	Age         int
+
+	ID uuid.UUID
 }
 
 func (o *PersonOptions) toModel() (Person, error) {
 	var res Person
+
 	id, err := uuid.NewV7()
 	if err != nil {
 		return res, err

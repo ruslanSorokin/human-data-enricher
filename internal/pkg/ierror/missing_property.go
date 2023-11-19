@@ -1,6 +1,7 @@
 package ierror
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -24,4 +25,14 @@ func NewMissingProperty(prop, enum string) error {
 			property:             prop,
 		},
 	}
+}
+
+func IsMissingProperty(err error) bool {
+	_, ok := AsMissingProperty(err)
+	return ok
+}
+
+func AsMissingProperty(err error) (*MissingPropertyError, bool) {
+	var t *MissingPropertyError
+	return t, errors.As(err, &t)
 }

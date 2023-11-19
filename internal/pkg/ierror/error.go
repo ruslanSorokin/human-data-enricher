@@ -113,7 +113,12 @@ func (e InstantiatedAPIError) Is(target error) bool {
 	return errors.As(target, &t) && t == e.parent
 }
 
-func As(target error) bool {
+func IsAPIError(err error) bool {
+	_, ok := AsAPIError(err)
+	return ok
+}
+
+func AsAPIError(err error) (*APIError, bool) {
 	var t *APIError
-	return errors.As(target, &t)
+	return t, errors.As(err, &t)
 }

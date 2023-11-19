@@ -30,7 +30,7 @@ func (s *PersonService) Delete(
 	err := s.vtor.ID(ctx, id)
 	if err != nil {
 		switch {
-		case ierror.As(err):
+		case ierror.IsAPIError(err):
 
 		default:
 			s.log.Error("bad attempt to delete a person",
@@ -43,7 +43,7 @@ func (s *PersonService) Delete(
 
 	err = s.storage.Delete(ctx, id)
 	switch {
-	case err == nil || ierror.As(err):
+	case err == nil || ierror.IsAPIError(err):
 
 	default:
 		s.log.Error("bad attempt to delete a person",

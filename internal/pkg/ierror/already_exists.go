@@ -11,10 +11,12 @@ type AlreadyExistsErrorI interface {
 	APIErrorI
 
 	DuplicateID() (string, bool)
+	UniqueProperty() (string, bool)
 }
 
 type AlreadyExistsError struct {
-	duplicateID string
+	duplicateID    string
+	uniqueProperty string
 
 	APIError
 }
@@ -31,7 +33,8 @@ func NewAlreadyExists(
 	enum string,
 ) *AlreadyExistsError {
 	return &AlreadyExistsError{
-		duplicateID: "",
+		duplicateID:    "",
+		uniqueProperty: "",
 		APIError: APIError{
 			msg:  msg,
 			grpc: codes.AlreadyExists,
@@ -41,9 +44,14 @@ func NewAlreadyExists(
 	}
 }
 
-// DuplicateID returns duplicate ID if field is populated.
+// DuplicateID returns duplicate ID if the field is populated.
 func (e AlreadyExistsError) DuplicateID() (string, bool) {
 	return e.duplicateID, e.duplicateID != ""
+}
+
+// UniqueProperty returns uniqueness property if the field is populated.
+func (e AlreadyExistsError) UniqueProperty() (string, bool) {
+	return e.uniqueProperty, e.uniqueProperty != ""
 }
 
 type InstantiatedAlreadyExistsError struct {
@@ -68,7 +76,26 @@ func (e *InstantiatedAlreadyExistsError) WithDuplicateID(
 	return e
 }
 
+// WithUniqueProperty returns a copy of AlreadyExistsError with populated
+// "uniqueProperty" field.
+func (e *InstantiatedAlreadyExistsError) WithUniqueProperty(
+	prop string,
+) *InstantiatedAlreadyExistsError {
+	e.uniqueProperty = prop
+	return e
+}
+
 func (e InstantiatedAlreadyExistsError) Is(target error) bool {
 	var t *AlreadyExistsError
 	return errors.As(target, &t) && t.APIError == e.parent.APIError
+}
+
+func IsAlreadyExists(err error) bool {
+	_, ok := AsAlreadyExists(err)
+	return ok
+}
+
+func AsAlreadyExists(err error) (*AlreadyExistsError, bool) {
+	var t *AlreadyExistsError
+	return t, errors.As(err, &t)
 }

@@ -59,7 +59,7 @@ func (s *PersonService) Create(
 	err = s.vtor.Person(ctx, &p)
 	if err != nil {
 		switch {
-		case ierror.As(err):
+		case ierror.IsAPIError(err):
 
 		default:
 			s.log.Error("bad attempt to create a person",
@@ -73,7 +73,7 @@ func (s *PersonService) Create(
 
 	p, err = s.storage.Create(ctx, &p)
 	switch {
-	case err == nil || ierror.As(err):
+	case err == nil || ierror.IsAPIError(err):
 
 	default:
 		s.log.Error("bad attempt to insert a new person into the storage",

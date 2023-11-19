@@ -1,6 +1,7 @@
 package ierror
 
 import (
+	"errors"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -24,4 +25,14 @@ func NewInternal(msg, enum string) *BadGatewayError {
 			enum: enum,
 		},
 	}
+}
+
+func IsInternalError(err error) bool {
+	_, ok := AsInternalError(err)
+	return ok
+}
+
+func AsInternalError(err error) (*InternalError, bool) {
+	var t *InternalError
+	return t, errors.As(err, &t)
 }

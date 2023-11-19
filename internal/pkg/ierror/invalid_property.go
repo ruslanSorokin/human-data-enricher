@@ -68,3 +68,13 @@ func (e InstantiatedInvalidPropertyError) Is(target error) bool {
 	var t *InvalidPropertyError
 	return errors.As(target, &t) && t == e.parent
 }
+
+func IsInvalidProperty(err error) bool {
+	_, ok := AsInvalidProperty(err)
+	return ok
+}
+
+func AsInvalidProperty(err error) (*InvalidPropertyError, bool) {
+	var t *InvalidPropertyError
+	return t, errors.As(err, &t)
+}
