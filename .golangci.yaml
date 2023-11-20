@@ -322,9 +322,9 @@ issues:
     - source: "//noinspection"
       linters: [gocritic]
     - text: "fieldalignment: (.*)"
-      path: "(.*test/.*)|(.*_test\\.go)"
+      path: "(.*test_.*/.*)|(.*test/.*)|(.*_test\\.go)"
       linters: [govet]
-    - path: "(.*test/.*)|(.*_test\\.go)"
+    - path: "(.*test_.*/.*)|(.*test/.*)|(.*_test\\.go)"
       linters:
         - bodyclose
         - dupl
@@ -340,22 +340,22 @@ issues:
     - text: "replacement are not allowed: (.*)"
       linters: [gomoddirectives]
     - text: "(.*) is a global variable"
-      path: "(.*test/.*)|(.*_test\\.go)"
+      path: "(.*test_.*/.*)|(.*test/.*)|(.*_test\\.go)"
       linters: [gochecknoglobals]
     - text: "ST1003: should not use underscores in package names"
       linters: [stylecheck]
     - text: "don't use an underscore in package name"
       linters: [revive]
     - text: "Function '(.*)' is too long ((.*))"
-      path: "(.*test/.*)|(.*_test\\.go)"
+      path: "(.*test_.*/.*)|(.*test/.*)|(.*_test\\.go)"
       linters: [funlen]
     - path: "ient/schema"
       linters: [exhaustruct]
     - path: "ient/gen"
       linters: [exhaustruct]
     - text: "ST1003: should not use underscores in Go names; method (.*) should be (.*)"
-      path: "(.*test/.*)|(.*_test\\.go)"
+      path: "(.*test_.*/.*)|(.*test/.*)|(.*_test\\.go)"
       linters: [stylecheck]
     - text: "var-naming: don't use underscores in Go names; method (.*) should be (.*)"
-      path: "(.*test/.*)|(.*_test\\.go)"
+      path: "(.*test_.*/.*)|(.*test/.*)|(.*_test\\.go)"
       linters: [revive]
