@@ -70,6 +70,9 @@ linters-settings:
       - "^google.golang.org/grpc.KeepaliveParams$"
       - "^github.com/gofiber/fiber/v2/middleware/monitor.Config$"
       - "^github.com/gofiber/fiber/v2/middleware/recover.Config$"
+      # patterns
+      - "^.*/ient/schema/.*"
+      - "^.*/ient/gen/.*"
 
   funlen:
     # Checks the number of lines in a function.
@@ -115,6 +118,9 @@ linters-settings:
       - prometheus.ExponentialBuckets
       - prometheus.ExponentialBucketsRange
       - prometheus.LinearBuckets
+    ignored-files:
+      - "^.*_test\\.go"
+      - "^.*test"
 
   gomodguard:
     blocked:
@@ -315,7 +321,10 @@ issues:
       linters: [godot]
     - source: "//noinspection"
       linters: [gocritic]
-    - path: "_test\\.go"
+    - text: "fieldalignment: (.*)"
+      path: "(.*test/.*)|(.*_test\\.go)"
+      linters: [govet]
+    - path: "(.*test/.*)|(.*_test\\.go)"
       linters:
         - bodyclose
         - dupl
@@ -326,23 +335,27 @@ issues:
         - wrapcheck
     - text: 'shadow: declaration of "(err|ctx)" shadows declaration at'
       linters: [govet]
-    - text: "fieldalignment: (.*)"
-      path: "(.*/test/.*)|(.*/.*_test\\.go)"
-      linters: [govet]
     - text: "odd number of arguments passed as key-value pairs for logging"
       linters: [loggercheck]
     - text: "replacement are not allowed: (.*)"
       linters: [gomoddirectives]
-    - text: "mnd: Magic number: (.*), in (.*) detected"
-      path: "(.*/test/.*)|(.*/.*_test\\.go)"
-      linters: [gomnd]
     - text: "(.*) is a global variable"
-      path: "(.*/test/.*)|(.*/.*_test\\.go)"
+      path: "(.*test/.*)|(.*_test\\.go)"
       linters: [gochecknoglobals]
     - text: "ST1003: should not use underscores in package names"
       linters: [stylecheck]
     - text: "don't use an underscore in package name"
       linters: [revive]
     - text: "Function '(.*)' is too long ((.*))"
-      path: "(.*/test/.*)|(.*/.*_test\\.go)"
+      path: "(.*test/.*)|(.*_test\\.go)"
       linters: [funlen]
+    - path: "ient/schema"
+      linters: [exhaustruct]
+    - path: "ient/gen"
+      linters: [exhaustruct]
+    - text: "ST1003: should not use underscores in Go names; method (.*) should be (.*)"
+      path: "(.*test/.*)|(.*_test\\.go)"
+      linters: [stylecheck]
+    - text: "var-naming: don't use underscores in Go names; method (.*) should be (.*)"
+      path: "(.*test/.*)|(.*_test\\.go)"
+      linters: [revive]
