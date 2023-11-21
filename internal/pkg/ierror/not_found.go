@@ -1,6 +1,7 @@
 package ierror
 
 import (
+	"errors"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -26,4 +27,14 @@ func NewNotFound(msg, enum string) *NotFoundError {
 			enum: enum,
 		},
 	}
+}
+
+func IsNotFound(err error) bool {
+	_, ok := AsNotFound(err)
+	return ok
+}
+
+func AsNotFound(err error) (*NotFoundError, bool) {
+	var t *NotFoundError
+	return t, errors.As(err, &t)
 }

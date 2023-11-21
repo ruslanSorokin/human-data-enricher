@@ -1,6 +1,7 @@
 package ierror
 
 import (
+	"errors"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -26,4 +27,14 @@ func NewInvalidArgument(msg, enum string) *InvalidArgumentError {
 			enum: enum,
 		},
 	}
+}
+
+func IsInvalidArgument(err error) bool {
+	_, ok := AsInvalidArgument(err)
+	return ok
+}
+
+func AsInvalidArgument(err error) (*InvalidArgumentError, bool) {
+	var t *InvalidArgumentError
+	return t, errors.As(err, &t)
 }

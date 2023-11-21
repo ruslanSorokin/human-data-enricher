@@ -29,19 +29,27 @@ func (s PersonService) Get(
 ) (model.Person, error) {
 	var res model.Person
 
-	if err := s.vtor.ID(ctx, id); err != nil {
-		if !ierror.As(err) {
-			s.log.Error("bad attempt to create a person",
+	err := s.vtor.ID(ctx, id)
+	if err != nil {
+		switch {
+		case ierror.IsAPIError(err):
+
+		default:
+			s.log.Error("bad attempt to retrieve a person",
+				"error", err,
 				"id", id)
 		}
+
 		return res, err
 	}
-	res, err := s.storage.Get(ctx, id)
+
+	res, err = s.storage.Get(ctx, id)
 	switch {
-	case err == nil || ierror.As(err):
+	case err == nil || ierror.IsAPIError(err):
+
 	default:
 		s.log.Error("bad attempt to retrieve a person",
-			"err", err,
+			"error", err,
 			"id", id)
 	}
 	return res, err

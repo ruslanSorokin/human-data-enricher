@@ -22,7 +22,7 @@ func (e *Enricher) EnrichByName(
 	name, sname string,
 	mname sql.NullString,
 ) (model.Person, error) {
-	props := presumedProperties{Age: 0, Gender: "", Nationality: ""}
+	var props presumedProperties
 
 	ageCh := make(chan int, 1)
 	genderCh := make(chan string, 1)

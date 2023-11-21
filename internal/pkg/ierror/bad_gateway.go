@@ -1,6 +1,7 @@
 package ierror
 
 import (
+	"errors"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
@@ -27,4 +28,14 @@ func NewBadGateway(
 			enum: enum,
 		},
 	}
+}
+
+func IsBadGateway(err error) bool {
+	_, ok := AsBadGateway(err)
+	return ok
+}
+
+func AsBadGateway(err error) (*BadGatewayError, bool) {
+	var t *BadGatewayError
+	return t, errors.As(err, &t)
 }
