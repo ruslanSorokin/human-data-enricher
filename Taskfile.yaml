@@ -30,6 +30,27 @@ tasks:
         SRC_DIR: "{{.SRC_DIR}}"
         COMPANY_PREFIXES: "{{.COMPANY_PREFIXES}}"
         DOCKERFILE: "{{.CONTAINER_FILE}}"
+
+  # ----------------------------------- build ---------------------------------- #
+  build:
+    desc: "Build source code into executable"
+    aliases: ["b"]
+    vars:
+      SRC_DIR: '{{default "." .GO_SRC_DIR}}'
+      _ENTRY_POINT: '{{default "./" .GO_ENTRY_POINT}}'
+      ENTRY_POINT: '{{if (not (hasPrefix "./" ._ENTRY_POINT))}}{{(printf "./%s" ._ENTRY_POINT)}}{{else}}{{._ENTRY_POINT}}{{end}}'
+    cmd:
+      task: _build
+      vars:
+        SRC_DIR: "{{.SRC_DIR}}"
+        ENTRY_POINT: "{{.ENTRY_POINT}}"
+
+  build:dry:
+    desc: "Try to build the application without creating any executables"
+    aliases: ["bd"]
+    cmd:
+      task: _build:dry
+
   # ---------------------------------------------------------------------------- #
   #                                  Lint action                                 #
   # ---------------------------------------------------------------------------- #
@@ -99,17 +120,19 @@ tasks:
         COMPANY_PREFIXES: "{{.COMPANY_PREFIXES}}"
         DOCKERFILE: "{{.DOCKERFILE}}"
 
-  build:
-    vars:
-      ENTRY_POINT: '{{default "." .GO_ENTRY_POINT}}'
-    cmd: go build -v -o main ./{{.ENTRY_POINT}}
+  # ---------------------------------------------------------------------------- #
+  #                                 Build action                                 #
+  # ---------------------------------------------------------------------------- #
+  _build:
+    internal: true
+    requires:
+      vars: ["ENTRY_POINT"]
+    generates:
+      - "main"
+    sources:
+      - "{{.SRC_DIR}}/**/*.go"
+    cmd: go build -v -o main {{.ENTRY_POINT}}
 
-  test:unit:
-    vars:
-      ENTRY_POINT: '{{default "." .GO_ENTRY_POINT}}'
-    cmd: go test ./... -count=1 -v -short
-
-  test:all:
-    vars:
-      ENTRY_POINT: '{{default "." .GO_ENTRY_POINT}}'
-    cmd: go test ./... -count=1 -v
+  _build:dry:
+    internal: true
+    cmd: go build -v ./...
