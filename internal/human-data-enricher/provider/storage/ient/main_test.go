@@ -19,7 +19,7 @@ import (
 
 	"github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/storage/ient"
 	entgen "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/storage/ient/gen"
-	"github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/test_person"
+	test_person "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/test/person"
 	"github.com/ruslanSorokin/human-data-enricher/internal/pkg/util"
 )
 
@@ -54,17 +54,15 @@ func NewIntegrationSuite(s *suite.Suite) *IntegrationSuite {
 }
 
 func TestIntegration_PostgresPersonStorage(t *testing.T) {
-	suite.Run(t, NewIntegrationSuite(&suite.Suite{Assertions: assert.New(t)}))
-}
-
-func (s *IntegrationSuite) SetupSuite() {
-	t := s.T()
-
 	flag.Parse()
 	if testing.Short() {
 		t.Skip()
 	}
 
+	suite.Run(t, NewIntegrationSuite(&suite.Suite{Assertions: assert.New(t)}))
+}
+
+func (s *IntegrationSuite) SetupSuite() {
 	p := util.MustXX(dockertest.NewPool(""))
 
 	s.pool = p
