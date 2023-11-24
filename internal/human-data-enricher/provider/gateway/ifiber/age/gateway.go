@@ -60,7 +60,11 @@ func (g *AgeGateway) AgeByName(
 			"body", body,
 			"stCode", stCode,
 			"error", errs)
-		return 0, fmt.Errorf("%w: %w", provider.ErrBadAgeGateway, errors.Join(errs...))
+		return 0, fmt.Errorf(
+			"%w: %w",
+			provider.ErrBadAgeGateway,
+			errors.Join(errs...),
+		)
 	}
 
 	var respBody struct {

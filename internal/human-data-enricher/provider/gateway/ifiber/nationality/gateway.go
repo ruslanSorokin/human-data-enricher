@@ -24,7 +24,10 @@ type NationalityGateway struct {
 	client *fiber.Client
 }
 
-func NewNationalityGateway(l *slog.Logger, c *fiber.Client) *NationalityGateway {
+func NewNationalityGateway(
+	l *slog.Logger,
+	c *fiber.Client,
+) *NationalityGateway {
 	return &NationalityGateway{log: l, client: c}
 }
 
@@ -60,7 +63,11 @@ func (g *NationalityGateway) NationalityByName(
 			"body", body,
 			"stCode", stCode,
 			"error", errs)
-		return "", fmt.Errorf("%w: %w", provider.ErrBadNationalityGateway, errors.Join(errs...))
+		return "", fmt.Errorf(
+			"%w: %w",
+			provider.ErrBadNationalityGateway,
+			errors.Join(errs...),
+		)
 	}
 
 	var respBody response

@@ -60,7 +60,11 @@ func (g *GenderGateway) GenderByName(
 			"body", body,
 			"stCode", stCode,
 			"error", errs)
-		return "", fmt.Errorf("%w: %w", provider.ErrBadGenderGateway, errors.Join(errs...))
+		return "", fmt.Errorf(
+			"%w: %w",
+			provider.ErrBadGenderGateway,
+			errors.Join(errs...),
+		)
 	}
 
 	var respBody struct {

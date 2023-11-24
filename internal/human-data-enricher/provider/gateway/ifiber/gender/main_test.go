@@ -6,10 +6,11 @@ import (
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
-	ifiber "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/gateway/ifiber/gender"
-	test_gender "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/test/gender"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+
+	ifiber "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/gateway/ifiber/gender"
+	test_gender "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/test/gender"
 )
 
 type IntegrationSuite struct {

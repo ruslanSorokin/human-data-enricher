@@ -12,6 +12,9 @@ type ProviderSuite struct {
 	Provider provider.NationalityProviderI
 }
 
-func NewSuite(s suite.TestingSuite, p provider.NationalityProviderI) *ProviderSuite {
+func NewSuite(
+	s suite.TestingSuite,
+	p provider.NationalityProviderI,
+) *ProviderSuite {
 	return &ProviderSuite{TestingSuite: s, Provider: p}
 }

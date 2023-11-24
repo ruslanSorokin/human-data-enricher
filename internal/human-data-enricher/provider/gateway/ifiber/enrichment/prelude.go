@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider"
 	ifiber_age "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/gateway/ifiber/age"
 	ifiber_gender "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/gateway/ifiber/gender"

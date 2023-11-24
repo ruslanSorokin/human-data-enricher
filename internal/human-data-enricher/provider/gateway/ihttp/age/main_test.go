@@ -6,10 +6,11 @@ import (
 	"net/http"
 	"testing"
 
-	ihttp "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/gateway/ihttp/age"
-	test_age "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/test/age"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+
+	ihttp "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/gateway/ihttp/age"
+	test_age "github.com/ruslanSorokin/human-data-enricher/internal/human-data-enricher/provider/test/age"
 )
 
 type IntegrationSuite struct {

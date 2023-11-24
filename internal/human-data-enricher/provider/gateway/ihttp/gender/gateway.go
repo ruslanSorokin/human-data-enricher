@@ -28,7 +28,10 @@ func NewGenderGateway(l *slog.Logger, c *http.Client) *GenderGateway {
 
 var _ provider.GenderProviderI = (*GenderGateway)(nil)
 
-func (g *GenderGateway) GenderByName(ctx context.Context, n string) (string, error) {
+func (g *GenderGateway) GenderByName(
+	ctx context.Context,
+	n string,
+) (string, error) {
 	req, err := http.NewRequestWithContext(ctx, method, baseURL, nil)
 	if err != nil {
 		g.log.Error("bad attempt to create new request",
